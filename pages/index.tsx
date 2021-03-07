@@ -1,8 +1,10 @@
+import MainHome from '../component/layout/MainHome';
+
 const Home = () => {
   return (
-    <div>
+    <MainHome titile="Home">
       <h1>Hello</h1>
-    </div>
+    </MainHome>
   );
 };
 
