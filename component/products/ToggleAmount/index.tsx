@@ -18,7 +18,9 @@ const ToggleAmount = ({ quantity }: Props) => {
           </button>
         </div>
       ) : (
-        <button className="add-to-cart">Add To Cart</button>
+        <button className="add-to-cart" onClick={() => alert('add to cart')}>
+          Add To Cart
+        </button>
       )}
     </Fragment>
   );
