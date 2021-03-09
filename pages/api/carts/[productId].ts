@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'GET':
       try {
-        const cartItem = await Cart.findById(productId);
+        const cartItem = await Cart.findOne({ productId });
 
         if (!cartItem) {
           return res.status(404).json({ msg: 'Product not found.' });
@@ -29,7 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     case 'PUT':
       try {
-        const cartItem = await Cart.findById(productId);
+        const cartItem = await Cart.findOne({ productId });
 
         if (!cartItem) {
           return res.status(404).json({ msg: 'Product not found.' });
@@ -53,13 +53,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     case 'DELETE':
       try {
-        const cartItem = await Cart.findById(productId);
+        const cartItem = await Cart.findOne({ productId });
 
         if (!cartItem) {
           return res.status(404).json({ msg: 'Product not found.' });
         }
 
-        await Cart.findByIdAndRemove(productId);
+        await Cart.findOneAndRemove({ productId });
 
         return res.status(200).json({ msg: 'Prodyct removed from cart!' });
       } catch (err) {
