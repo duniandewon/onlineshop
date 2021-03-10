@@ -9,7 +9,7 @@ interface Prop {
 }
 
 const Product = ({ product }: Prop) => {
-  const { addToCart, toggleQuantity, cartItem } = useCart(
+  const { addToCart, toggleQuantity, removeFromCart, cartItem } = useCart(
     product._id,
     product.price
   );
@@ -18,7 +18,8 @@ const Product = ({ product }: Prop) => {
     if (action === 'dec' && cartItem.quantity > 1)
       toggleQuantity(product._id, 'dec');
 
-    if (action === 'dec' && cartItem.quantity === 1) alert('remove from cart');
+    if (action === 'dec' && cartItem.quantity === 1)
+      removeFromCart(product._id);
 
     if (action === 'inc') toggleQuantity(product._id, 'inc');
   };

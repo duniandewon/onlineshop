@@ -30,17 +30,17 @@ const useCart = (productId: string, price: number) => {
   };
 
   const toggleQuantity = async (productId: string, action: string) => {
-    if (action === 'dec' && cartItem.quantity > 1)
-      setCartItem({ ...cartItem, quantity: cartItem.quantity - 1 });
-
-    if (action === 'inc')
-      setCartItem({ ...cartItem, quantity: cartItem.quantity + 1 });
-
     const config = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
+
+    if (action === 'dec' && cartItem.quantity > 1)
+      setCartItem({ ...cartItem, quantity: cartItem.quantity - 1 });
+
+    if (action === 'inc')
+      setCartItem({ ...cartItem, quantity: cartItem.quantity + 1 });
 
     try {
       const res = await axios.put(
@@ -49,6 +49,18 @@ const useCart = (productId: string, price: number) => {
         config
       );
       setCartItem(res.data);
+    } catch (err) {
+      console.log(err.response);
+      setError(err.response);
+    }
+  };
+
+  const removeFromCart = async (productId: string) => {
+    if (productId === cartItem.productId) setCartItem(null);
+
+    try {
+      await axios.delete(`http://localhost:3000/api/carts/${productId}`);
+      setCartItem(null);
     } catch (err) {
       console.log(err.response);
       setError(err.response);
@@ -71,7 +83,7 @@ const useCart = (productId: string, price: number) => {
     getCartItem();
   }, []);
 
-  return { addToCart, toggleQuantity, cartItem, error };
+  return { addToCart, toggleQuantity, removeFromCart, cartItem, error };
 };
 
 export default useCart;
