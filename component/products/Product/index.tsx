@@ -2,11 +2,27 @@ import ToggleAmount from '../ToggleAmount';
 
 import { Product as Product_I } from '../../../interfaces';
 
+import useCart from '../../../utils/useCart';
+
 interface Prop {
   product: Product_I;
 }
 
 const Product = ({ product }: Prop) => {
+  const { addToCart, toggleQuantity, cartItem } = useCart(
+    product._id,
+    product.price
+  );
+
+  const handleTogleQuantity = (action: string) => {
+    if (action === 'dec' && cartItem.quantity > 1)
+      toggleQuantity(product._id, 'dec');
+
+    if (action === 'dec' && cartItem.quantity === 1) alert('remove from cart');
+
+    if (action === 'inc') toggleQuantity(product._id, 'inc');
+  };
+
   return (
     <div className="product">
       <div className="product__image-container">
@@ -25,7 +41,11 @@ const Product = ({ product }: Prop) => {
                 : product.price}
             </div>
           </div>
-          <ToggleAmount quantity={0} />
+          <ToggleAmount
+            addToCart={addToCart}
+            toggleQuantity={handleTogleQuantity}
+            quantity={cartItem && cartItem.quantity}
+          />
         </div>
       </div>
     </div>

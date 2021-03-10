@@ -2,23 +2,25 @@ import { Fragment } from 'react';
 
 interface Props {
   quantity: number;
+  addToCart: () => void;
+  toggleQuantity: (action: string) => void;
 }
 
-const ToggleAmount = ({ quantity }: Props) => {
+const ToggleAmount = ({ quantity, addToCart, toggleQuantity }: Props) => {
   return (
     <Fragment>
       {quantity >= 1 ? (
         <div className="toggle-quantity">
-          <button>
+          <button className="inc-prod" onClick={() => toggleQuantity('inc')}>
             <i className="fas fa-plus"></i>
           </button>
           <span>{quantity}</span>
-          <button>
+          <button className="dec-prod" onClick={() => toggleQuantity('dec')}>
             <i className="fas fa-minus"></i>
           </button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={() => alert('add to cart')}>
+        <button className="add-to-cart" onClick={addToCart}>
           Add To Cart
         </button>
       )}
