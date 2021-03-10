@@ -49,7 +49,13 @@ const Home = () => {
                 className="product_wrapper"
                 onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   const target = e.target as Element;
-                  if (target.className !== 'add-to-cart') {
+
+                  const invalidClicks =
+                    target.className !== 'add-to-cart' &&
+                    target.className !== 'fas fa-plus' &&
+                    target.className !== 'fas fa-minus';
+
+                  if (invalidClicks) {
                     handleSetProduct(product);
                   }
                 }}
