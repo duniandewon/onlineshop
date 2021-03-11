@@ -5,9 +5,26 @@ import ToggleAmount from '../ToggleAmount';
 
 import { Product } from '../../../interfaces';
 
+import useCart from '../../../utils/useCart';
+
 type Prop = Modal_I & { product: Product };
 
 const ProductDetail = ({ isOpen, onClose, product }: Prop) => {
+  const { addToCart, toggleQuantity, removeFromCart, cartItem } = useCart(
+    product._id,
+    product.price
+  );
+
+  const handleTogleQuantity = (action: string) => {
+    if (action === 'dec' && cartItem.quantity > 1)
+      toggleQuantity(product._id, 'dec');
+
+    if (action === 'dec' && cartItem.quantity === 1)
+      removeFromCart(product._id);
+
+    if (action === 'inc') toggleQuantity(product._id, 'inc');
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {product && (
@@ -29,7 +46,11 @@ const ProductDetail = ({ isOpen, onClose, product }: Prop) => {
             </div>
             <div className="product-detail__footer">
               <span className="product-detail__price">${product.price}</span>
-              <ToggleAmount quantity={0} />
+              <ToggleAmount
+                addToCart={addToCart}
+                toggleQuantity={handleTogleQuantity}
+                quantity={cartItem && cartItem.quantity}
+              />
             </div>
           </div>
         </div>
