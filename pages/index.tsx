@@ -9,7 +9,7 @@ import { Product as Product_I } from '../interfaces';
 
 const Home = () => {
   const [products, setProducts] = useState<Product_I[]>([]);
-  const [product, setProduct] = useState<Product_I>();
+  const [product, setProduct] = useState<Product_I | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleToggleModal = () => setIsModalOpen(!isModalOpen);
@@ -38,6 +38,7 @@ const Home = () => {
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
+            setProduct(null);
           }}
         />
       )}
