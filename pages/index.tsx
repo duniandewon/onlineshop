@@ -6,6 +6,7 @@ import Product from '../component/products/Product';
 import ProductDetail from '../component/products/ProductDetail';
 
 import { getProducts } from '../redux/actions/products';
+import { getCarts } from '../redux/actions/carts';
 
 import { Product as Product_I } from '../interfaces';
 import { RootState } from '../reducers';
@@ -16,19 +17,18 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const products = useSelector((state: RootState) => state.products);
+  const products = useSelector(({ products }: RootState) => products);
 
   const handleToggleModal = () => setIsModalOpen(!isModalOpen);
+
+  type ClickEvent = React.MouseEvent<HTMLDivElement>;
 
   const handleSetProduct = (product: Product_I) => {
     handleToggleModal();
     setProduct(product);
   };
 
-  const handleOnClickProduct = (
-    e: React.MouseEvent<HTMLDivElement>,
-    product: Product_I
-  ) => {
+  const handleOnClickProduct = (e: ClickEvent, product: Product_I) => {
     const target = e.target as Element;
 
     const invalidClicks =
@@ -48,9 +48,7 @@ const Home = () => {
         {products.map((product) => (
           <div
             className="product_wrapper"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) =>
-              handleOnClickProduct(e, product)
-            }
+            onClick={(e: ClickEvent) => handleOnClickProduct(e, product)}
           >
             <Product product={product} />
           </div>
@@ -65,6 +63,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(getProducts());
+    dispatch(getCarts());
   }, []);
 
   return (
