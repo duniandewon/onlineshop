@@ -1,56 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
 import ToggleAmount from '../ToggleAmount';
 
-import { CartItem, Product as Product_I } from '../../../interfaces';
-import { RootState } from '../../../reducers';
+import { Product as Product_I } from '../../../interfaces';
 
-import {
-  addToCart,
-  toggleQuantity,
-  removeFromCart,
-} from '../../../redux/actions/carts';
+import useCart from '../../../utils/useCart';
 
 interface Prop {
   product: Product_I;
 }
 
 const Product = ({ product }: Prop) => {
-  const [cartItem, setCartItem] = useState<CartItem | null>(null);
-
-  const dispatch = useDispatch();
-  const carts: CartItem[] = useSelector(({ carts }: RootState) => carts);
-
-  const handleAddToCArt = () => {
-    const { _id, price } = product;
-
-    setCartItem({ quantity: 1, productId: _id, price });
-
-    dispatch(addToCart(product._id, product.price));
-  };
-
-  const handleToggleQuantity = (action: string) => {
-    if (action === 'dec' && cartItem.quantity === 1) {
-      dispatch(removeFromCart(product._id));
-    }
-
-    if (action === 'dec' && cartItem.quantity > 1) {
-      dispatch(toggleQuantity(product._id, 'dec'));
-    }
-
-    if (action === 'inc') {
-      dispatch(toggleQuantity(product._id, 'inc'));
-    }
-  };
-
-  useEffect(() => {
-    const cartItem: CartItem = carts.find(
-      (cart) => cart.productId === product._id
-    );
-
-    setCartItem(cartItem);
-  }, [carts]);
+  const { addToCart, toggleQuantity, cartItem } = useCart(
+    product._id,
+    product.price
+  );
 
   return (
     <div className="product">
@@ -71,8 +33,8 @@ const Product = ({ product }: Prop) => {
             </div>
           </div>
           <ToggleAmount
-            addToCart={handleAddToCArt}
-            toggleQuantity={handleToggleQuantity}
+            addToCart={addToCart}
+            toggleQuantity={toggleQuantity}
             quantity={cartItem && cartItem.quantity}
           />
         </div>

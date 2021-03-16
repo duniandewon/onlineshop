@@ -1,89 +1,50 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { CartItem } from '../interfaces';
 
-import axios from 'axios';
+import {
+  addToCart as addToCartAction,
+  toggleQuantity as toggleQuantityAction,
+  removeFromCart as removeFromCartAction,
+} from '../redux/actions/carts';
+
+import { RootState } from '../reducers';
 
 const useCart = (productId: string, price: number) => {
   const [cartItem, setCartItem] = useState<CartItem | null>(null);
-  const [error, setError] = useState();
 
-  const addToCart = async () => {
-    setCartItem({ quantity: 1, price, productId });
+  const dispatch = useDispatch();
+  const carts: CartItem[] = useSelector(({ carts }: RootState) => carts);
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+  const addToCart = () => {
+    setCartItem({ quantity: 1, productId, price });
 
-    try {
-      const res = await axios.post(
-        'http://localhost:3000/api/carts',
-        { productId },
-        config
-      );
-      setCartItem(res.data);
-    } catch (err) {
-      console.log(err.response);
-      setError(err.response);
-    }
+    dispatch(addToCartAction(productId, price));
   };
 
-  const toggleQuantity = async (productId: string, action: string) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    if (action === 'dec' && cartItem.quantity > 1)
-      setCartItem({ ...cartItem, quantity: cartItem.quantity - 1 });
-
-    if (action === 'inc')
-      setCartItem({ ...cartItem, quantity: cartItem.quantity + 1 });
-
-    try {
-      const res = await axios.put(
-        `http://localhost:3000/api/carts/${productId}`,
-        { action },
-        config
-      );
-      setCartItem(res.data);
-    } catch (err) {
-      console.log(err.response);
-      setError(err.response);
+  const toggleQuantity = async (action: string) => {
+    if (action === 'dec' && cartItem.quantity === 1) {
+      dispatch(removeFromCartAction(productId));
     }
-  };
 
-  const removeFromCart = async (productId: string) => {
-    if (productId === cartItem.productId) setCartItem(null);
+    if (action === 'dec' && cartItem.quantity > 1) {
+      dispatch(toggleQuantityAction(productId, 'dec'));
+    }
 
-    try {
-      await axios.delete(`http://localhost:3000/api/carts/${productId}`);
-      setCartItem(null);
-    } catch (err) {
-      console.log(err.response);
-      setError(err.response);
+    if (action === 'inc') {
+      dispatch(toggleQuantityAction(productId, 'inc'));
     }
   };
 
   useEffect(() => {
-    const getCartItem = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:3000/api/carts/${productId}`
-        );
-        if (res.status === 200) {
-          setCartItem(res.data);
-        }
-      } catch (err) {
-        setError(err.response.data.msg);
-      }
-    };
-    getCartItem();
-  }, []);
+    const cartItem: CartItem = carts.find(
+      (cart) => cart.productId === productId
+    );
 
-  return { addToCart, toggleQuantity, removeFromCart, cartItem, error };
+    setCartItem(cartItem);
+  }, [carts]);
+
+  return { addToCart, toggleQuantity, cartItem };
 };
 
 export default useCart;
