@@ -30,12 +30,8 @@ export const addToCart = (productId: string, price: number) => async (
   };
 
   try {
-    const res = await axios.post(
-      'http://localhost:3000/api/carts',
-      { productId },
-      config
-    );
-    dispatch(addToCartAction(res.data));
+    await axios.post('http://localhost:3000/api/carts', { productId }, config);
+    dispatch(getCarts());
   } catch (err) {
     console.log(err.response);
   }
