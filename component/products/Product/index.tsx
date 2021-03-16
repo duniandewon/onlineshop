@@ -6,7 +6,11 @@ import ToggleAmount from '../ToggleAmount';
 import { CartItem, Product as Product_I } from '../../../interfaces';
 import { RootState } from '../../../reducers';
 
-import { addToCart } from '../../../redux/actions/carts';
+import {
+  addToCart,
+  toggleQuantity,
+  removeFromCart,
+} from '../../../redux/actions/carts';
 
 interface Prop {
   product: Product_I;
@@ -26,13 +30,27 @@ const Product = ({ product }: Prop) => {
     dispatch(addToCart(product._id, product.price));
   };
 
+  const handleToggleQuantity = (action: string) => {
+    if (action === 'dec' && cartItem.quantity === 1) {
+      dispatch(removeFromCart(product._id));
+    }
+
+    if (action === 'dec' && cartItem.quantity > 1) {
+      dispatch(toggleQuantity(product._id, 'dec'));
+    }
+
+    if (action === 'inc') {
+      dispatch(toggleQuantity(product._id, 'inc'));
+    }
+  };
+
   useEffect(() => {
     const cartItem: CartItem = carts.find(
       (cart) => cart.productId === product._id
     );
 
     setCartItem(cartItem);
-  }, [cartItem]);
+  }, [carts]);
 
   return (
     <div className="product">
@@ -54,7 +72,7 @@ const Product = ({ product }: Prop) => {
           </div>
           <ToggleAmount
             addToCart={handleAddToCArt}
-            toggleQuantity={() => alert('toggle quantity')}
+            toggleQuantity={handleToggleQuantity}
             quantity={cartItem && cartItem.quantity}
           />
         </div>

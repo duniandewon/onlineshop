@@ -28,11 +28,12 @@ interface AddToCartAction {
 
 interface RemoveFromCartAction {
   type: typeof REMOVE_FROM_CART;
+  payload: string;
 }
 
 interface ToggleQuantityAction {
   type: typeof TOGGLE_QUANTITY;
-  payload: CartItem;
+  payload: { productId: string; action: string };
 }
 
 export type CartActionTypes =

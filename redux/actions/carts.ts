@@ -37,6 +37,39 @@ export const addToCart = (productId: string, price: number) => async (
   }
 };
 
+export const toggleQuantity = (productId: string, action: string) => async (
+  dispatch
+) => {
+  dispatch(toggleQuantityAction({ productId, action }));
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  try {
+    await axios.put(
+      `http://localhost:3000/api/carts/${productId}`,
+      { action },
+      config
+    );
+    dispatch(getCarts());
+  } catch (err) {
+    console.log(err.response);
+  }
+};
+
+export const removeFromCart = (productId: string) => async (dispatch) => {
+  dispatch(removeFromCartAction(productId));
+
+  try {
+    await axios.delete(`http://localhost:3000/api/carts/${productId}`);
+    dispatch(getCarts());
+  } catch (err) {
+    console.log(err.response);
+  }
+};
+
 function getCartAction(payload: CartItem[]): CartActionTypes {
   return {
     type: GET_CARTS,
@@ -47,6 +80,23 @@ function getCartAction(payload: CartItem[]): CartActionTypes {
 function addToCartAction(payload: CartItem): CartActionTypes {
   return {
     type: ADD_TO_CART,
+    payload,
+  };
+}
+
+function toggleQuantityAction(payload: {
+  productId: string;
+  action: string;
+}): CartActionTypes {
+  return {
+    type: TOGGLE_QUANTITY,
+    payload,
+  };
+}
+
+function removeFromCartAction(payload: string): CartActionTypes {
+  return {
+    type: REMOVE_FROM_CART,
     payload,
   };
 }
