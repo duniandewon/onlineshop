@@ -1,45 +1,67 @@
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useQueryClient, useMutation } from 'react-query';
+import { useDispatch } from 'react-redux';
+
+import cartServices from '../utils/cartServices';
+
 import { CartItem } from '../interfaces';
 
-import {
-  addToCart as addToCartAction,
-  toggleQuantity as toggleQuantityAction,
-  removeFromCart as removeFromCartAction,
-} from '../redux/actions/carts';
+import * as actions from '../redux/actions/carts';
 
-import { RootState } from '../reducers';
+const CartServices = new cartServices();
 
 const useCart = (productId: string, price: number) => {
   const [cartItem, setCartItem] = useState<CartItem | null>(null);
 
   const dispatch = useDispatch();
-  const carts: CartItem[] = useSelector(({ carts }: RootState) => carts);
+  const queryClient = useQueryClient();
+
+  const carts: CartItem[] = queryClient.getQueryData('carts');
+
+  const addToCartMutation = useMutation(CartServices.addToCart, {
+    onMutate: async (productId: string) => {
+      await queryClient.cancelQueries('carts');
+
+      const prevCarts = queryClient.getQueryData<CartItem[]>('carts');
+
+      if (prevCarts) {
+        queryClient.setQueryData<CartItem[]>('carts', (old) => [
+          ...old,
+          { quantity: 1, productId, price },
+        ]);
+      }
+
+      return prevCarts;
+    },
+
+    onError: (err, newTodo, prevCarts) => {
+      if (prevCarts) {
+        queryClient.setQueryData<CartItem[]>('caerts', prevCarts);
+      }
+    },
+  });
 
   const addToCart = () => {
-    setCartItem({ quantity: 1, productId, price });
-
-    dispatch(addToCartAction(productId, price));
+    addToCartMutation.mutate(productId);
   };
 
   const toggleQuantity = async (action: string) => {
     if (action === 'dec' && cartItem.quantity === 1) {
-      dispatch(removeFromCartAction(productId));
+      dispatch(actions.removeFromCart(productId));
     }
 
     if (action === 'dec' && cartItem.quantity > 1) {
-      dispatch(toggleQuantityAction(productId, 'dec'));
+      dispatch(actions.toggleQuantity(productId, 'dec'));
     }
 
     if (action === 'inc') {
-      dispatch(toggleQuantityAction(productId, 'inc'));
+      dispatch(actions.toggleQuantity(productId, 'inc'));
     }
   };
 
   useEffect(() => {
-    const cartItem: CartItem = carts.find(
-      (cart) => cart.productId === productId
-    );
+    const cartItem: CartItem =
+      carts && carts?.find((cart) => cart.productId === productId);
 
     setCartItem(cartItem);
   }, [carts]);

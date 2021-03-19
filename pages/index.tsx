@@ -1,19 +1,25 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+4;
+import { useQuery } from 'react-query';
 
 import MainHome from '../component/layout/MainHome';
 import Product from '../component/products/Product';
 import ProductDetail from '../component/products/ProductDetail';
 
 import { getProducts } from '../redux/actions/products';
-import { getCarts } from '../redux/actions/carts';
+import cartServices from '../utils/cartServices';
 
 import { Product as Product_I } from '../interfaces';
 import { RootState } from '../reducers';
 
+const CartServices = new cartServices();
+
 const Home = () => {
   const [product, setProduct] = useState<Product_I | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const cartQuery = useQuery('carts', CartServices.getCarts);
 
   const dispatch = useDispatch();
 
@@ -63,7 +69,6 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(getProducts());
-    dispatch(getCarts());
   }, []);
 
   return (
