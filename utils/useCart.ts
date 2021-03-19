@@ -39,6 +39,9 @@ const useCart = (productId: string, price: number) => {
         queryClient.setQueryData<CartItem[]>('caerts', prevCarts);
       }
     },
+    onSettled: () => {
+      queryClient.invalidateQueries('carts');
+    },
   });
 
   const addToCart = () => {
