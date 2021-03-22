@@ -28,9 +28,36 @@ class cartServices {
     return res.data;
   };
 
-  toggleQuantity = async (productId: string, action: string) => {};
+  toggleQuantity = async ({
+    productId,
+    action,
+  }: {
+    productId: string;
+    action: string;
+  }) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const res = await axios.put(
+      `http://localhost:3000/api/carts/${productId}`,
+      { action },
+      config
+    );
 
-  removeFromCart = async (productId: string) => {};
+    return res.data;
+  };
+
+  removeFromCart = async (productId: string) => {
+    const res = await axios.delete(
+      `http://localhost:3000/api/carts/${productId}`
+    );
+
+    if (res.status !== 200) throw new Error('Faild remove from cart');
+
+    return res.data;
+  };
 }
 
 export default cartServices;

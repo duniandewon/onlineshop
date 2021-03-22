@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
-import { useDispatch } from 'react-redux';
 
 import cartServices from '../utils/cartServices';
 
 import { CartItem } from '../interfaces';
-
-import * as actions from '../redux/actions/carts';
 
 const CartServices = new cartServices();
 
 const useCart = (productId: string, price: number) => {
   const [cartItem, setCartItem] = useState<CartItem | null>(null);
 
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const carts: CartItem[] = queryClient.getQueryData('carts');
@@ -36,7 +32,67 @@ const useCart = (productId: string, price: number) => {
 
     onError: (err, newTodo, prevCarts) => {
       if (prevCarts) {
-        queryClient.setQueryData<CartItem[]>('caerts', prevCarts);
+        queryClient.setQueryData<CartItem[]>('carts', prevCarts);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries('carts');
+    },
+  });
+
+  const toggleQuantityMutation = useMutation(CartServices.toggleQuantity, {
+    onMutate: async ({ productId, action }) => {
+      await queryClient.cancelQueries('carts');
+
+      const prevCarts = queryClient.getQueryData<CartItem[]>('carts');
+
+      if (prevCarts) {
+        queryClient.setQueryData<CartItem[]>('carts', (old) =>
+          old.map((cartItem) => {
+            if (cartItem.productId === productId) {
+              if (action === 'inc') {
+                return { ...cartItem, quantity: (cartItem.quantity += 1) };
+              }
+
+              if (action === 'dec' && cartItem.quantity > 1) {
+                return { ...cartItem, quantity: (cartItem.quantity -= 1) };
+              }
+            }
+
+            return cartItem;
+          })
+        );
+      }
+
+      return prevCarts;
+    },
+    onError: (err, newTodo, prevCarts) => {
+      if (prevCarts) {
+        queryClient.setQueryData<CartItem[]>('carts', prevCarts);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries('carts');
+    },
+  });
+
+  const removeFromCartMutation = useMutation(CartServices.removeFromCart, {
+    onMutate: async (productId: string) => {
+      await queryClient.cancelQueries('carts');
+
+      const prevCarts = queryClient.getQueryData<CartItem[]>('carts');
+
+      if (prevCarts) {
+        queryClient.setQueryData<CartItem[]>('carts', (old) =>
+          old.filter((item) => item.productId !== productId)
+        );
+      }
+
+      return prevCarts;
+    },
+    onError: (err, newTodo, prevCarts) => {
+      if (prevCarts) {
+        queryClient.setQueryData<CartItem[]>('carts', prevCarts);
       }
     },
     onSettled: () => {
@@ -50,15 +106,15 @@ const useCart = (productId: string, price: number) => {
 
   const toggleQuantity = async (action: string) => {
     if (action === 'dec' && cartItem.quantity === 1) {
-      dispatch(actions.removeFromCart(productId));
+      removeFromCartMutation.mutate(productId);
     }
 
     if (action === 'dec' && cartItem.quantity > 1) {
-      dispatch(actions.toggleQuantity(productId, 'dec'));
+      toggleQuantityMutation.mutate({ productId, action: 'dec' });
     }
 
     if (action === 'inc') {
-      dispatch(actions.toggleQuantity(productId, 'inc'));
+      toggleQuantityMutation.mutate({ productId, action: 'inc' });
     }
   };
 
