@@ -1,17 +1,14 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-4;
+import React, { Fragment, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import MainHome from '../component/layout/MainHome';
 import Product from '../component/products/Product';
 import ProductDetail from '../component/products/ProductDetail';
 
-import { getProducts } from '../redux/actions/products';
 import cartServices from '../utils/cartServices';
 
 import { Product as Product_I } from '../interfaces';
-import { RootState } from '../reducers';
+import useProducts from '../utils/useProducts';
 
 const CartServices = new cartServices();
 
@@ -19,11 +16,9 @@ const Home = () => {
   const [product, setProduct] = useState<Product_I | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const cartQuery = useQuery('carts', CartServices.getCarts);
+  const { data, isLoading } = useProducts();
 
-  const dispatch = useDispatch();
-
-  const products = useSelector(({ products }: RootState) => products);
+  useQuery('carts', CartServices.getCarts);
 
   const handleToggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -48,11 +43,11 @@ const Home = () => {
   };
 
   const handleRenderProducts = () =>
-    products &&
-    products.length > 0 && (
+    !isLoading && (
       <div className="products">
-        {products.map((product) => (
+        {data.map((product: Product_I) => (
           <div
+            key={product._id}
             className="product_wrapper"
             onClick={(e: ClickEvent) => handleOnClickProduct(e, product)}
           >
@@ -66,10 +61,6 @@ const Home = () => {
     setIsModalOpen(false);
     setProduct(null);
   };
-
-  useEffect(() => {
-    dispatch(getProducts());
-  }, []);
 
   return (
     <Fragment>
