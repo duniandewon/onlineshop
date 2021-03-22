@@ -2,7 +2,6 @@ import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Hydrate } from 'react-query/hydration';
-import { wrapper } from '../store';
 
 import '../styles/main.scss';
 
@@ -18,4 +17,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default wrapper.withRedux(MyApp);
+export default MyApp;
