@@ -67,9 +67,10 @@ const useCart = (productId: string, price: number) => {
       return prevCarts;
     },
     onError: (err, newTodo, prevCarts) => {
-      if (prevCarts) {
-        queryClient.setQueryData<CartItem[]>('carts', prevCarts);
-      }
+      console.log('Error when toggling quantity: ', prevCarts);
+      // if (prevCarts) {
+      //   queryClient.setQueryData<CartItem[]>('carts', prevCarts);
+      // }
     },
     onSettled: () => {
       queryClient.invalidateQueries('carts');
