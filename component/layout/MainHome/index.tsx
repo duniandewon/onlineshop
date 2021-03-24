@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Head from 'next/head';
 
 interface Props {
@@ -13,10 +13,10 @@ const MainHome = ({ children, titile }: Props) => {
         <title>My Online Shop | {titile}</title>
       </Head>
       {/* @TODO: MainNav will go here */}
-      <div className="wrapper">
+      <Fragment>
         {/* @TODO: SIdeNav will go here */}
         <main className="main">{children}</main>
-      </div>
+      </Fragment>
     </div>
   );
 };

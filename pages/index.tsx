@@ -18,7 +18,7 @@ const Home = () => {
 
   const { data, isLoading } = useProducts();
 
-  useQuery('carts', CartServices.getCarts);
+  const { data: carts } = useQuery('carts', CartServices.getCarts);
 
   const handleToggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -42,37 +42,57 @@ const Home = () => {
     }
   };
 
-  const handleRenderProducts = () =>
-    !isLoading && (
-      <div className="products">
-        {data.map((product: Product_I) => (
-          <div
-            key={product._id}
-            className="product_wrapper"
-            onClick={(e: ClickEvent) => handleOnClickProduct(e, product)}
-          >
-            <Product product={product} />
-          </div>
-        ))}
-      </div>
-    );
+  const handleRenderProducts = () => (
+    <div className="products">
+      {data.map((product: Product_I) => (
+        <div
+          key={product._id}
+          className="product_wrapper"
+          onClick={(e: ClickEvent) => handleOnClickProduct(e, product)}
+        >
+          <Product product={product} />
+        </div>
+      ))}
+    </div>
+  );
 
   const handleOnCloseModal = () => {
     setIsModalOpen(false);
     setProduct(null);
   };
 
+  const handleRenderCartToggler = () => {
+    const total = carts.reduce(
+      (prevValue, currValue) =>
+        prevValue + currValue.price * currValue.quantity,
+      0
+    );
+    return (
+      <div className="cart-toggler">
+        <div className="cart-toggler__items">
+          <i className="fas fa-shopping-basket" /> {carts && carts.length} items
+        </div>
+        <div className="cart-toggler__total">${total}</div>
+      </div>
+    );
+  };
+
   return (
-    <Fragment>
-      <MainHome titile="Home">{handleRenderProducts()}</MainHome>
-      {product && isModalOpen && (
-        <ProductDetail
-          product={product}
-          isOpen={isModalOpen}
-          onClose={handleOnCloseModal}
-        />
-      )}
-    </Fragment>
+    !isLoading && (
+      <Fragment>
+        <MainHome titile="Home">
+          {handleRenderProducts()}
+          {handleRenderCartToggler()}
+        </MainHome>
+        {product && isModalOpen && (
+          <ProductDetail
+            product={product}
+            isOpen={isModalOpen}
+            onClose={handleOnCloseModal}
+          />
+        )}
+      </Fragment>
+    )
   );
 };
 

@@ -1,7 +1,11 @@
 @use './basics/basics';
 
-@use './components/product';
-@use './components/product-detail';
-@use './components/toggle-amount';
-
 @use './layout/modal';
+@use "./layout/app";
+
+@use './components/products/product';
+@use './components/products/product-detail';
+
+@use './components/carts/cart-togller';
+
+@use './components/shared/toggle-amount';
