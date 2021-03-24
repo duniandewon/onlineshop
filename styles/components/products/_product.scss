@@ -32,9 +32,9 @@
   }
 
   &__name {
+    width: 100%;
     font-size: 1.6rem;
     white-space: nowrap;
-    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
