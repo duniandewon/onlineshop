@@ -20,6 +20,11 @@
 
   width: 10rem;
 
+  &.vertical {
+    flex-direction: column;
+    width: 3rem;
+  }
+
   button {
     padding: 0.8rem 0;
     background: transparent;
