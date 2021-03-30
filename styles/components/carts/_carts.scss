@@ -1,0 +1,59 @@
+.carts {
+  width: 48rem;
+  height: 100%;
+
+  background: #fff;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+
+  z-index: 10;
+  transition: transform 0.2s ease-in-out;
+
+  &.open {
+    transform: translateX(0);
+    box-shadow: -3px 0px 8px 0px rgba(0, 0, 0, 0.35);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 1.5rem 4rem;
+  }
+
+  &__body {
+    overflow-y: auto;
+    height: 80%;
+  }
+
+  &__footer {
+    text-align: center;
+    padding: 4rem;
+  }
+
+  &__voucher {
+    margin-bottom: 2rem;
+    cursor: pointer;
+  }
+}
+
+.checkout-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.4rem 0.4rem 2rem;
+
+  &--subtotal {
+    padding: 1rem 2rem;
+    background-color: #fff;
+    color: #000;
+    border-radius: 10rem;
+  }
+}

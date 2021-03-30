@@ -17,7 +17,7 @@ const ToggleAmount = ({
     <Fragment>
       {quantity >= 1 ? (
         <div
-          className={`toggle-quantity ${
+          className={`btn toggle-quantity ${
             direction === 'vertical' ? 'vertical' : ''
           }`}
         >
@@ -30,7 +30,7 @@ const ToggleAmount = ({
           </button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={addToCart}>
+        <button className="btn add-to-cart" onClick={addToCart}>
           Add To Cart
         </button>
       )}

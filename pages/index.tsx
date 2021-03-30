@@ -5,6 +5,9 @@ import MainHome from '../component/layout/MainHome';
 import Product from '../component/products/Product';
 import ProductDetail from '../component/products/ProductDetail';
 
+import CartToggler from '../component/carts/CartToggler';
+import Carts from '../component/carts';
+
 import cartServices from '../utils/cartServices';
 
 import { Product as Product_I } from '../interfaces';
@@ -15,6 +18,7 @@ const CartServices = new cartServices();
 const Home = () => {
   const [product, setProduct] = useState<Product_I | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const { data, isLoading } = useProducts();
 
@@ -33,7 +37,7 @@ const Home = () => {
     const target = e.target as Element;
 
     const invalidClicks =
-      target.className !== 'add-to-cart' &&
+      target.className !== 'btn add-to-cart' &&
       target.className !== 'fas fa-plus' &&
       target.className !== 'fas fa-minus';
 
@@ -61,29 +65,16 @@ const Home = () => {
     setProduct(null);
   };
 
-  const handleRenderCartToggler = () => {
-    const total = carts.reduce(
-      (prevValue, currValue) =>
-        prevValue + currValue.price * currValue.quantity,
-      0
-    );
-    return (
-      <div className="cart-toggler">
-        <div className="cart-toggler__items">
-          <i className="fas fa-shopping-basket" /> {carts && carts.length} items
-        </div>
-        <div className="cart-toggler__total">${total}</div>
-      </div>
-    );
-  };
+  const handleToggleCart = () => setIsCartOpen(!isCartOpen);
 
   return (
     !isLoading && (
       <Fragment>
         <MainHome titile="Home">
           {handleRenderProducts()}
-          {handleRenderCartToggler()}
+          <CartToggler carts={carts && carts} openCart={handleToggleCart} />
         </MainHome>
+        {carts && <Carts isOpen={isCartOpen} closeCart={handleToggleCart} />}
         {product && isModalOpen && (
           <ProductDetail
             product={product}

@@ -1,0 +1,10 @@
+.x-btn {
+  background: transparent;
+  border: none;
+  color: #d3d3d3;
+  transition: color 0.3s ease-in-out;
+
+  &:hover {
+    color: #000;
+  }
+}
