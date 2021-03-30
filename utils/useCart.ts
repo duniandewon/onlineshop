@@ -119,6 +119,10 @@ const useCart = (productId: string, price: number) => {
     }
   };
 
+  const removeFromCart = () => {
+    removeFromCartMutation.mutate(productId);
+  };
+
   useEffect(() => {
     const cartItem: CartItem =
       carts && carts?.find((cart) => cart.productId === productId);
@@ -126,7 +130,7 @@ const useCart = (productId: string, price: number) => {
     setCartItem(cartItem);
   }, [carts]);
 
-  return { addToCart, toggleQuantity, cartItem };
+  return { addToCart, toggleQuantity, removeFromCart, cartItem };
 };
 
 export default useCart;
