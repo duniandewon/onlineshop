@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     method,
     query: { productId },
-    body: { action },
+    body: { quantity },
   } = req;
 
   await connectDB();
@@ -35,13 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(404).json({ msg: 'Product not found.' });
         }
 
-        if (action === 'inc') {
-          cartItem.quantity += 1;
-        }
-
-        if (action === 'dec' && cartItem.quantity > 1) {
-          cartItem.quantity -= 1;
-        }
+        cartItem.quantity = quantity;
 
         await cartItem.save();
 

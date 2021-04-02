@@ -30,10 +30,10 @@ class cartServices {
 
   toggleQuantity = async ({
     productId,
-    action,
+    quantity,
   }: {
     productId: string;
-    action: string;
+    quantity: number;
   }) => {
     const config = {
       headers: {
@@ -42,7 +42,7 @@ class cartServices {
     };
     const res = await axios.put(
       `http://localhost:3000/api/carts/${productId}`,
-      { action },
+      { quantity },
       config
     );
 

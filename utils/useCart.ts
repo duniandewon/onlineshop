@@ -41,7 +41,7 @@ const useCart = (productId: string, price: number) => {
   });
 
   const toggleQuantityMutation = useMutation(CartServices.toggleQuantity, {
-    onMutate: async ({ productId, action }) => {
+    onMutate: async ({ productId, quantity }) => {
       await queryClient.cancelQueries('carts');
 
       const prevCarts = queryClient.getQueryData<CartItem[]>('carts');
@@ -50,13 +50,7 @@ const useCart = (productId: string, price: number) => {
         queryClient.setQueryData<CartItem[]>('carts', (old) =>
           old.map((cartItem) => {
             if (cartItem.productId === productId) {
-              if (action === 'inc') {
-                return { ...cartItem, quantity: (cartItem.quantity += 1) };
-              }
-
-              if (action === 'dec' && cartItem.quantity > 1) {
-                return { ...cartItem, quantity: (cartItem.quantity -= 1) };
-              }
+              return { ...cartItem, quantity };
             }
 
             return cartItem;
@@ -106,17 +100,21 @@ const useCart = (productId: string, price: number) => {
   };
 
   const toggleQuantity = async (action: string) => {
-    if (action === 'dec' && cartItem.quantity === 1) {
+    let quantity = cartItem.quantity;
+
+    if (action === 'dec' && quantity === 1) {
       removeFromCartMutation.mutate(productId);
     }
 
     if (action === 'dec' && cartItem.quantity > 1) {
-      toggleQuantityMutation.mutate({ productId, action: 'dec' });
+      quantity -= 1;
     }
 
     if (action === 'inc') {
-      toggleQuantityMutation.mutate({ productId, action: 'inc' });
+      quantity += 1;
     }
+
+    toggleQuantityMutation.mutate({ productId, quantity });
   };
 
   const removeFromCart = () => {
