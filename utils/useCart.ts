@@ -102,12 +102,10 @@ const useCart = (productId: string, price: number) => {
   const toggleQuantity = async (action: string) => {
     let quantity = cartItem.quantity;
 
-    if (action === 'dec' && quantity === 1) {
-      removeFromCartMutation.mutate(productId);
-    }
-
-    if (action === 'dec' && cartItem.quantity > 1) {
-      quantity -= 1;
+    if (action === 'dec') {
+      cartItem.quantity === 1
+        ? removeFromCartMutation.mutate(productId)
+        : (quantity -= 1);
     }
 
     if (action === 'inc') {
